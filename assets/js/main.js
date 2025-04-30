@@ -2,6 +2,8 @@
 // FILTER / ADD BOOK ELEMENTS
 const addNewBookBtn = document.querySelector('.add_book_btn');
 
+const filterInp = document.querySelector('.filter');
+
 const orderInp = document.querySelector('#order_inp');
 const orderLabel = document.querySelector('.order_label');
 const orderIcon = document.querySelector('.order_icon');
@@ -47,6 +49,10 @@ let isCardRead;
 let isCardFav;
 
 let isBookEdit = false;
+
+let filterType = '';
+let isOderDisabled = true;
+let orderWay = 'up';
 
 const sampleLibrary = [
     {
@@ -181,7 +187,7 @@ const bookCardTemplate = (id, title, author, pages, favStatus, readStatus, imgSr
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24"
                                 >
-                                    <title>book-edit-outline</title>
+                                    <title>Edit this book</title>
                                     <path
                                         d="M6 20H11V22H6C4.89 22 4 21.11 4 20V4C4 2.9 4.89 2 6 2H18C19.11 2 20 2.9 20 4V10.3C19.78 10.42 19.57 10.56 19.39 10.74L18 12.13V4H13V12L10.5 9.75L8 12V4H6V20M22.85 13.47L21.53 12.15C21.33 11.95 21 11.95 20.81 12.15L19.83 13.13L21.87 15.17L22.85 14.19C23.05 14 23.05 13.67 22.85 13.47M13 19.96V22H15.04L21.17 15.88L19.13 13.83L13 19.96Z"
                                     />
@@ -192,7 +198,7 @@ const bookCardTemplate = (id, title, author, pages, favStatus, readStatus, imgSr
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24"
                                 >
-                                    <title>book-heart-outline</title>
+                                    <title>Favorite status</title>
                                     <path
                                         d="M19 23.3L18.4 22.8C16.4 20.9 15 19.7 15 18.2C15 17 16 16 17.2 16C17.9 16 18.6 16.3 19 16.8C19.4 16.3 20.1 16 20.8 16C22 16 23 16.9 23 18.2C23 19.7 21.6 20.9 19.6 22.8L19 23.3M18 2C19.1 2 20 2.9 20 4V13.08L19 13L18 13.08V4H13V12L10.5 9.75L8 12V4H6V20H13.08C13.2 20.72 13.45 21.39 13.8 22H6C4.9 22 4 21.1 4 20V4C4 2.9 4.9 2 6 2H18Z"
                                     />
@@ -203,7 +209,7 @@ const bookCardTemplate = (id, title, author, pages, favStatus, readStatus, imgSr
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24"
                                 >
-                                    <title>book-check-outline</title>
+                                    <title>Read status</title>
                                     <path
                                         d="M16.75 22.16L14 19.16L15.16 18L16.75 19.59L20.34 16L21.5 17.41L16.75 22.16M18 2C19.1 2 20 2.9 20 4V13.34C19.37 13.12 18.7 13 18 13V4H13V12L10.5 9.75L8 12V4H6V20H12.08C12.2 20.72 12.45 21.39 12.8 22H6C4.9 22 4 21.1 4 20V4C4 2.9 4.9 2 6 2H18Z"
                                     />
@@ -215,7 +221,7 @@ const bookCardTemplate = (id, title, author, pages, favStatus, readStatus, imgSr
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24"
                                 >
-                                    <title>trash-can-outline</title>
+                                    <title>Delete this book</title>
                                     <path
                                         d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z"
                                     />
@@ -264,21 +270,9 @@ function Book(sampleLib, id, title, author, pages, favStatus, readStatus, imgSrc
     };
 }
 
+// ===========================================================================================
 //FOR WEB APPEARANCE FUNCTIONAL + STYLES
-// Change order label text and arrow absed on click
-orderLabel.addEventListener('click', (e) => {
-    // check if the order input is checked or not
-    let isOrderInpChecked = orderInp.checked;
-
-    // Change the text value (thefirst node) of the label
-    if (isOrderInpChecked) {
-        orderLabel.firstChild.nodeValue = 'Descending';
-        orderIcon.classList.add('down');
-    } else {
-        orderLabel.firstChild.nodeValue = 'Ascending';
-        orderIcon.classList.remove('down');
-    }
-});
+// ===========================================================================================
 
 // MODAL FORM STYLES FUNCS
 // reset all values of the modal form inps and reset fav/read style
@@ -397,7 +391,7 @@ formFavInp.addEventListener('click', () => {
 });
 
 // ===========================================================================================
-// LOGICAL FUNCS
+// LOGICAL FUNCS FOR ADD / RENDER /HANDLE BOOK CARD
 // ===========================================================================================
 
 // Use in Edit book state
@@ -711,6 +705,7 @@ const initializeLibrary = () => {
         addBookToLibrary(renderSampleLib);
         renderLibrary(renderType);
     }
+    console.log('Init Lib: ', myLibrary);
 };
 initializeLibrary();
 
@@ -832,8 +827,93 @@ const handleForm = (event) => {
 };
 modalForm.addEventListener('submit', handleForm);
 
-/*
-AIs:
-1. Add alert confirm when delete
-2. 
-*/
+// ===========================================================================================
+// LOGICAL + STYLES FUNCS FOR FILTER AND ORDER BOOK LIST
+// ===========================================================================================
+
+// Sort the myLibrary arr based on filterType and orderWay
+const sortLibrary = (filterType, orderWay) => {
+    // if orderWay is 'up' sort a => z
+    if (orderWay === 'up') {
+        myLibrary.sort((a, b) => {
+            if (a[filterType] > b[filterType]) return 1;
+            else if (a[filterType] < b[filterType]) return -1;
+            else return 0;
+        });
+    }
+    // otherwise sort z => a
+    else if (orderWay === 'down') {
+        myLibrary.sort((a, b) => {
+            if (a[filterType] > b[filterType]) return -1;
+            else if (a[filterType] < b[filterType]) return 1;
+            else return 0;
+        });
+    }
+    // console.log('Sorted Lib: ', myLibrary);
+};
+
+// Listen to the filterInp to
+// change the filterType accordingly filter selection index
+filterInp.addEventListener('change', () => {
+    let filterValue = filterInp.value;
+    let filterIndex = filterInp.selectedIndex;
+
+    // remove "disable" behavior of orderLabel if
+    // there is book and filter slection != default
+    if (myLibrary.length > 0 && filterIndex > 0) {
+        orderLabel.classList.remove('disable');
+    } else {
+        orderLabel.classList.add('disable');
+    }
+
+    switch (filterIndex) {
+        case 0:
+            filterType = '';
+            break;
+        case 1:
+        case 2:
+        case 3:
+        case 6:
+            filterType = filterValue;
+            break;
+        case 4:
+            filterType = 'readStatus';
+            break;
+        case 5:
+            filterType = 'favStatus';
+            break;
+        default:
+            filterType = '';
+            alert('Cannot filter this selection. Please try again later.');
+            break;
+    }
+    // console.log(filterType);
+
+    // sort myLibrary arr and render them
+    sortLibrary(filterType, orderWay);
+    renderType = 'renderAll';
+    renderLibrary(renderType);
+});
+
+// Change order label text and arrow based on click
+// set up orderWay then sort myLibrary
+// render library
+orderLabel.addEventListener('click', (e) => {
+    // check if the order input is checked or not
+    let isOrderInpChecked = orderInp.checked;
+
+    // Change the text value (thefirst node) of the label
+    if (isOrderInpChecked) {
+        orderLabel.firstChild.nodeValue = 'Descending';
+        orderIcon.classList.add('down');
+        orderWay = 'down';
+    } else {
+        orderLabel.firstChild.nodeValue = 'Ascending';
+        orderIcon.classList.remove('down');
+        orderWay = 'up';
+    }
+
+    sortLibrary(filterType, orderWay);
+    renderType = 'renderAll';
+    renderLibrary(renderType);
+});

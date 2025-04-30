@@ -454,7 +454,9 @@ body {
     color: var(--disable_gray_btn_text_color);
     border: 1px solid var(--disable_gray_btn_color);
     box-shadow: none;
-    cursor: none;
+    cursor: default;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .order_label.disable:hover {
