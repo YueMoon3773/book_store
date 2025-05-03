@@ -553,11 +553,16 @@ body {
     font-size: 2.6rem;
     font-weight: 600;
     color: var(--black_text);
-    max-width: var(--book_card_maxwidth_for_text);
+    /* max-width: var(--book_card_maxwidth_for_text); */
 
-    white-space: nowrap;
+    /* white-space: nowrap; */
     overflow: hidden;
-    text-overflow: ellipsis;
+    /* text-overflow: ellipsis; */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    word-break: break-all;
 }
 
 .book_author_wrapper {
@@ -686,7 +691,7 @@ body {
 @keyframes vanish {
     from {
         opacity: 1;
-        display: block;
+        display: grid;
     }
     to {
         opacity: 0;
