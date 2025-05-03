@@ -545,7 +545,7 @@ body {
 
 .book_info {
     font-size: 1rem;
-    margin-top: 0.6em;
+    /* margin-top: 0.6em; */
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -554,9 +554,10 @@ body {
 .book_title {
     margin: 0;
     font-size: 2.6rem;
+    height: 3.2rem;
     font-weight: 600;
     color: var(--black_text);
-    max-width: 100%;
+    max-width: clamp(60%, 280px, max-content);
 
     white-space: nowrap;
     overflow: hidden;
@@ -565,7 +566,7 @@ body {
 
 .book_author_wrapper {
     font-size: 1rem;
-    margin: 0.4em 0;
+    margin: 0.2em 0;
     max-width: 100%;
 
     white-space: nowrap;
