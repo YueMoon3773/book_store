@@ -686,7 +686,7 @@ body {
 @keyframes vanish {
     from {
         opacity: 1;
-        display: block;
+        display: grid;
     }
     to {
         opacity: 0;
