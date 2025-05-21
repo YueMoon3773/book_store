@@ -237,38 +237,69 @@ const bookCardTemplate = (id, title, author, pages, favStatus, readStatus, imgSr
 
 const myLibrary = [];
 
-function Book(sampleLib, id, title, author, pages, favStatus, readStatus, imgSrc, year, edition, language) {
-    if (!new.target) {
-        throw Error("You must use 'new' operator to call this constructor.");
-    }
-    this.id = id;
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.favStatus = favStatus;
-    this.readStatus = readStatus;
+// function Book(sampleLib, id, title, author, pages, favStatus, readStatus, imgSrc, year, edition, language) {
+//     if (!new.target) {
+//         throw Error("You must use 'new' operator to call this constructor.");
+//     }
+//     this.id = id;
+//     this.title = title;
+//     this.author = author;
+//     this.pages = pages;
+//     this.favStatus = favStatus;
+//     this.readStatus = readStatus;
 
-    if (sampleLib) {
-        this.imgSrc = `./assets/img/booksCover/${this.title.split(' ').join('')}.jpg`;
-    } else {
-        if (imgSrc === '') {
-            this.imgSrc = './assets/img/noImg.png';
+//     if (sampleLib) {
+//         this.imgSrc = `./assets/img/booksCover/${this.title.split(' ').join('')}.jpg`;
+//     } else {
+//         if (imgSrc === '') {
+//             this.imgSrc = './assets/img/noImg.png';
+//         } else {
+//             this.imgSrc = imgSrc;
+//         }
+//     }
+//     this.year = year;
+//     this.edition = edition;
+//     this.language = language;
+
+//     this.info = function () {
+//         let read_status = '';
+//         this.readStatus === false ? (read_status = 'not read yet') : (read_status = 'you read this book');
+
+//         let ret = `${this.title} by ${this.author}, ${this.pages}, ${read_status}.`;
+//         return ret;
+//     };
+// }
+
+const Book = class {
+    constructor(sampleLib, id, title, author, pages, favStatus, readStatus, imgSrc, year, edition, language) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.favStatus = favStatus;
+        this.readStatus = readStatus;
+
+        if (sampleLib) {
+            this.imgSrc = `./assets/img/booksCover/${this.title.split(' ').join('')}.jpg`;
         } else {
-            this.imgSrc = imgSrc;
+            if (imgSrc === '') {
+                this.imgSrc = './assets/img/noImg.png';
+            } else {
+                this.imgSrc = imgSrc;
+            }
         }
+        this.year = year;
+        this.edition = edition;
+        this.language = language;
     }
-    this.year = year;
-    this.edition = edition;
-    this.language = language;
 
-    this.info = function () {
+    info() {
         let read_status = '';
         this.readStatus === false ? (read_status = 'not read yet') : (read_status = 'you read this book');
-
         let ret = `${this.title} by ${this.author}, ${this.pages}, ${read_status}.`;
         return ret;
-    };
-}
+    }
+};
 
 // ===========================================================================================
 //FOR WEB APPEARANCE FUNCTIONAL + STYLES
