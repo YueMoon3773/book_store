@@ -658,6 +658,7 @@ body {
 .modal_wrapper {
     position: absolute;
     background-color: var(--modal_background_color);
+    backdrop-filter: blur(6px);
     top: 0;
     bottom: 0;
     right: 0;

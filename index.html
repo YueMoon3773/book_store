@@ -318,10 +318,10 @@
         </div>
 
         <!-- MODAL SECTION  -->
-        <div class="modal_wrapper hide">
+        <div class="modal_wrapper">
             <div class="modal">
                 <!-- FORM SECTION  -->
-                <form action="" class="modal_form">
+                <form action="" class="modal_form" novalidate>
                     <h1 class="form_title">Add your book's information</h1>
                     <!-- FORM BASIC INFORMATION SECTION  -->
                     <fieldset class="basic_info">
@@ -335,6 +335,7 @@
                                 class="form_book_inp"
                                 placeholder="The Shape of Water"
                                 pattern="^[A-Za-z0-9]+(?:[ '\s.][A-Za-z0-9]+)*$"
+                                required
                             />
                         </label>
 
@@ -347,6 +348,7 @@
                                 class="form_book_inp"
                                 placeholder="Daniel Kraus and Guillermo del Toro"
                                 pattern="^[A-Za-z0-9]+(?:[ '\s.][A-Za-z0-9]+)*$"
+                                required
                             />
                         </label>
 
@@ -360,6 +362,7 @@
                                 placeholder="320"
                                 pattern="\d*"
                                 title="Please enter digits only"
+                                required
                             />
                         </label>
 

@@ -736,9 +736,50 @@ const initializeLibrary = () => {
         addBookToLibrary(renderSampleLib);
         renderLibrary(renderType);
     }
-    console.log('Init Lib: ', myLibrary);
+    // console.log('Init Lib: ', myLibrary);
 };
 initializeLibrary();
+
+const validateForm = () => {
+    let validateStatus;
+    const titleAndAuthorRegex = /^[A-Za-z0-9]+(?:[ '\s.][A-Za-z0-9]+)*$/m;
+    const numberRegex = /\d*/gm;
+
+    const titleValidity = !formTitleInp.validity.valueMissing && titleAndAuthorRegex.test(formTitleInp.value);
+    const authorValidity = !formAuthorInp.validity.valueMissing && titleAndAuthorRegex.test(formAuthorInp.value);
+    const pagesValidity = !formPagesInp.validity.valueMissing && numberRegex.test(formPagesInp.value);
+    const yearValidity = numberRegex.test(formYearInp.value);
+
+    // console.log({ titleValidity, authorValidity, pagesValidity });
+
+    if (!titleValidity) {
+        console.log(1);
+
+        formTitleInp.classList.add('invalid');
+        formTitleInp.setCustomValidity('The title is not in the correct form. Please check again!');
+    }
+    if (!authorValidity) {
+        console.log(2);
+
+        formAuthorInp.classList.add('invalid');
+        formAuthorInp.setCustomValidity('The author is not in the correct form. Please check again!');
+    }
+    if (!pagesValidity) {
+        console.log(3);
+
+        formPagesInp.classList.add('invalid');
+        formPagesInp.setCustomValidity('The pages must be a number. Please check again!');
+    }
+    if (!yearValidity) {
+        console.log(4);
+
+        formYearInp.classList.add('invalid');
+        formYearInp.setCustomValidity('The year must be a number. Please check again!');
+    }
+
+    validateStatus = titleValidity && authorValidity && pagesValidity;
+    return validateStatus;
+};
 
 // take all values of the modal form inps
 // validate them
@@ -747,7 +788,7 @@ initializeLibrary();
 // this function works by click the submit btn in the form
 const sendBookInfo = (isBookEdit) => {
     let title, author, pages, favStatus, readStatus, imgSrc, year, edition, language;
-    let validateStatus = false;
+    let validateStatus;
 
     title = formTitleInp.value;
     author = formAuthorInp.value;
@@ -760,24 +801,27 @@ const sendBookInfo = (isBookEdit) => {
     language = formLanguageInp.value;
 
     // validate inputs value
-    if (title === '') {
-        validateStatus = false;
-        formTitleInp.classList.add('invalid');
-        alert('Title should be filled out. Please check again.');
-    } else if (author === '') {
-        validateStatus = false;
-        formAuthorInp.classList.add('invalid');
-        alert('Author should be filled out. Please check again.');
-    } else if (pages === '') {
-        validateStatus = false;
-        formPagesInp.classList.add('invalid');
-        alert('Pages should be filled out. Please check again.');
-    } else if (Number.isInteger(Number(pages)) === false || Number.isInteger(Number(year)) === false) {
-        validateStatus = false;
-        alert('Pages and year must be digits. Please check again.');
-    } else if (Number.isInteger(Number(pages)) === true) {
-        validateStatus = true;
-    }
+    // if (title === '') {
+    //     validateStatus = false;
+    //     formTitleInp.classList.add('invalid');
+    //     alert('Title should be filled out. Please check again.');
+    // } else if (author === '') {
+    //     validateStatus = false;
+    //     formAuthorInp.classList.add('invalid');
+    //     alert('Author should be filled out. Please check again.');
+    // } else if (pages === '') {
+    //     validateStatus = false;
+    //     formPagesInp.classList.add('invalid');
+    //     alert('Pages should be filled out. Please check again.');
+    // } else if (Number.isInteger(Number(pages)) === false || Number.isInteger(Number(year)) === false) {
+    //     validateStatus = false;
+    //     alert('Pages and year must be digits. Please check again.');
+    // } else if (Number.isInteger(Number(pages)) === true) {
+    //     validateStatus = true;
+    // }
+
+    //validate by constraint API
+    validateStatus = validateForm();
 
     if (isBookEdit === true) {
         isBookEdit = false;
@@ -824,6 +868,8 @@ const sendBookInfo = (isBookEdit) => {
     }
     // if not in edit Book state => Add new book to myLibrary arr
     else if (isBookEdit === false) {
+        console.log({ validateStatus });
+
         if (validateStatus) {
             renderType = 'renderAddedBook';
             renderSampleLib = false;
